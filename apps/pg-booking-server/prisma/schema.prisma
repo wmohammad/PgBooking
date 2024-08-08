@@ -1,0 +1,70 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Pg {
+  address     String?
+  amenities   EnumPgAmenities[]
+  bookings    Booking[]
+  createdAt   DateTime          @default(now())
+  id          String            @id @default(cuid())
+  location    EnumPgLocation?
+  name        String?
+  phoneNumber String?
+  price       Float?
+  typeField   EnumPgTypeField?
+  updatedAt   DateTime          @updatedAt
+}
+
+model Booking {
+  bookingDate DateTime?
+  createdAt   DateTime           @default(now())
+  id          String             @id @default(cuid())
+  pg          Pg?                @relation(fields: [pgId], references: [id])
+  pgId        String?
+  price       Float?
+  status      EnumBookingStatus?
+  updatedAt   DateTime           @updatedAt
+  user        User?              @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model User {
+  bookings    Booking[]
+  createdAt   DateTime      @default(now())
+  email       String?       @unique
+  firstName   String?
+  id          String        @id @default(cuid())
+  lastName    String?
+  password    String
+  phoneNumber String?
+  role        EnumUserRole?
+  roles       Json
+  updatedAt   DateTime      @updatedAt
+  username    String        @unique
+}
+
+enum EnumPgAmenities {
+  Option1
+}
+
+enum EnumPgLocation {
+  Option1
+}
+
+enum EnumPgTypeField {
+  Option1
+}
+
+enum EnumBookingStatus {
+  Option1
+}
+
+enum EnumUserRole {
+  Option1
+}
